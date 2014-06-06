@@ -1,7 +1,16 @@
+#define SYSFS
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/string.h>
+
+#ifdef SYSFS
+#include <linux/init.h>
+#include <linux/fs.h>
+#include <linux/slab.h>
+#else
 #include <linux/proc_fs.h>
+#endif
 
 // names
 #define ARG1 "arg1"
@@ -48,6 +57,39 @@ long calculate(void)
   }
   return res;
 }
+
+#ifdef SYSFS
+// description args
+//kernel obj attribute
+static struct attribute arg1 = {
+  .name = ARG1,
+  .mode = 0666,
+};
+//kernel obj attribute
+static struct attribute arg2 = {
+  .name = ARG2,
+  .mode = 0666,
+};
+//kernel obj attribute
+static struct attribute operation = {
+  .name = OPERATION,
+  .mode = 0666,
+};
+//kernel obj attribute
+static struct attribute result = {
+  .name = RESULT,
+  .mode = 0666,
+};
+//kernel obj attribute
+static struct attribute * calc_attributes[] = {
+  &arg1,
+  &arg2,
+  &operation,
+  &result,
+  NULL
+};
+
+#else
 /*
 * arg1 write handler
 */
@@ -157,4 +199,5 @@ void cleanup_module()
 module_init(init_module);
 module_exit(cleanup_module);
 MODULE_LICENSE("GPL");
+#endif
 
