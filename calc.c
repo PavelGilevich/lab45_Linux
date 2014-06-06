@@ -89,6 +89,33 @@ static struct attribute * calc_attributes[] = {
   NULL
 };
 
+static ssize_t default_show(struct kobject *kobj, struct attribute *attr, char *buf)
+{
+  if (!strcmp(attr->name, RESULT)) {
+    long res = calculate();
+    return sprintf(buf, "%ld\n", res);
+  } else {
+    return 0;
+  }
+}
+
+static ssize_t default_store(struct kobject *kobj, struct attribute *attr, const char *buf, size_t len)
+{
+  if (len > WRITE_SIZE) {
+    len = WRITE_SIZE;
+  }
+
+  if (!strcmp(attr->name, ARG1)) {
+    memcpy(arg1_input, buf, len);
+  } else if (!strcmp(attr->name, ARG2)) {
+    memcpy(arg2_input, buf, len);
+  } else if (!strcmp(attr->name, OPERATION)) {
+    memcpy(operation_input, buf, len);
+  }
+  return len;
+}
+
+
 #else
 /*
 * arg1 write handler
