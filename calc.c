@@ -120,4 +120,16 @@ int init_module()
   return 0;
 }
 
+//delete all virtual files from proc filesystem
+void cleanup_module()
+{
+  remove_proc_entry(ARG1, NULL);
+  remove_proc_entry(ARG2, NULL);
+  remove_proc_entry(OPERATION, NULL);
+  remove_proc_entry(RESULT, NULL);
+  printk(KERN_INFO "/proc/%s removed\n", PARENT_DIR);
+}
+module_init(init_module);
+module_exit(cleanup_module);
+MODULE_LICENSE("GPL");
 
