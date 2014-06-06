@@ -115,6 +115,34 @@ static ssize_t default_store(struct kobject *kobj, struct attribute *attr, const
   return len;
 }
 
+static struct sysfs_ops calc_ops = {
+  .show = default_show,
+  .store = default_store,
+};
+
+static struct kobj_type calc_type = {
+  .sysfs_ops = &calc_ops,
+  .default_attrs = calc_attributes,
+};
+
+//initialization kernel object
+struct kobject *calc_obj;
+static int __init sysfsexample_module_init(void)
+{
+  int err = -1;
+  calc_obj = kzalloc(sizeof(*calc_obj), GFP_KERNEL);
+  if (calc_obj) {
+    kobject_init(calc_obj, &calc_type);
+    if (kobject_add(calc_obj, NULL, "%s", PARENT_DIR)) {
+      err = -1;
+      printk("Sysfs creation failed\n");
+      kobject_put(calc_obj);
+      calc_obj = NULL;
+    }
+    err = 0;
+  }
+  return err;
+}
 
 #else
 /*
