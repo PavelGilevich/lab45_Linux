@@ -23,6 +23,31 @@ struct proc_dir_entry *arg2;
 struct proc_dir_entry *operation;
 struct proc_dir_entry *result;
 
+//Calculate Function
+long calculate(void)
+{
+  long a1 = 0;
+  long a2 = 0;
+  long res = 0;
+
+  if (arg1_input[strlen(arg1_input) - 2] == '\n') {
+    arg1_input[strlen(arg1_input) - 2] = (char)0;
+  }
+
+  kstrtol(arg1_input, 10, &a1);
+  kstrtol(arg2_input, 10, &a2);
+
+  if (operation_input[0] == '+') {
+    res = a1 + a2;
+  } else if (operation_input[0] == '-') {
+    res = a1 - a2;
+  } else if (operation_input[0] == '.') {
+    res = a1 * a2;
+  } else if (operation_input[0] == '/') {
+    res = a1 / a2;
+  }
+  return res;
+}
 /*
 * arg1 write handler
 */
